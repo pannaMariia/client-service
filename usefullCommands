@@ -1,0 +1,40 @@
+# Перейти в проект
+cd ~/Desktop/client-service-api
+
+# Запустить сервер (стандартный порт 8000)
+php artisan serve
+
+# Запустить на другом порту
+php artisan serve --port=8080
+
+# Запуск в фоновом режиме (освобождает терминал)
+php artisan serve > /dev/null 2>&1 &
+
+# Laravel Artisan
+php artisan list                 # Все доступные команды
+php artisan route:list           # Список всех маршрутов
+php artisan make:controller      # Создать контроллер
+php artisan make:model           # Создать модель
+php artisan make:migration       # Создать миграцию
+php artisan migrate              # Выполнить миграции
+php artisan migrate:rollback     # Откатить миграции
+php artisan tinker               # Интерактивная консоль
+php artisan cache:clear          # Очистить кэш
+php artisan config:clear         # Очистить конфиг
+php artisan key:generate         # Сгенерировать ключ
+
+
+# Swagger
+php artisan l5-swagger:generate  # Сгенерировать документацию
+
+# Composer
+composer install                 # Установить зависимости
+composer update                  # Обновить зависимости
+composer require пакет           # Установить пакет
+
+# PostgreSQL
+
+brew services start postgresql@14   # Запустить БД
+brew services stop postgresql@14    # Остановить БД
+brew services restart postgresql@14 # Перезапустить
+psql -d client_service_db           # Подключиться к БД

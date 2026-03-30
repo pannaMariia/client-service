@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Swagger;
+
+use OpenApi\Attributes as OA;
+
+#[OA\Info(
+    version: "1.0.0",
+    description: "API для управления клиентским сервисом",
+    title: "Client Service",
+    contact: new OA\Contact(
+        name: "Support",
+        email: "support@example.com"
+    )
+)]
+#[OA\Server(
+    url: "http://localhost:8000/api/v1",
+    description: "Local development server"
+)]
+#[OA\Server(
+    url: "https://api.example.com/api/v1",
+    description: "Production server"
+)]
+#[OA\Tag(
+    name: "Users",
+    description: "Управление пользователями"
+)]
+#[OA\Tag(
+    name: "Health",
+    description: "Проверка статуса API"
+)]
+#[OA\SecurityScheme(
+    securityScheme: "bearerAuth",
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT"
+)]
+class SwaggerAnnotations
+{
+}
