@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use App\Services\EventService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -40,6 +40,22 @@ class AuthController extends Controller
             'location' => $request->location,
             'birth_date' => $request->birth_date,
         ]);
+        //отправка ивента в world
+
+
+        try {
+            $eventService = new EventService();
+            $eventService->userCreated(
+                $user->id,
+                $user->location,
+                now()->toISOString()
+            );
+        } catch (\Exception $e) {
+            Log::error('Failed to send UserCreated event after registration', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

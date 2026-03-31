@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'world' => [
+        'url' => env('WORLD_SERVICE_URL', 'http://localhost:8001'),
+        'api_key' => env('WORLD_API_KEY', 'your-secret-key-here'),
+    ],
+
 ];

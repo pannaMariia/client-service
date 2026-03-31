@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+//маршрут для тестирования
 Route::get('/hello', fn() => ['message' => 'hello']);
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -12,3 +13,5 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
+// Тестовый webhook для отладки
+Route::post('/webhook/user-created', [App\Http\Controllers\WebhookController::class, 'userCreated']);
