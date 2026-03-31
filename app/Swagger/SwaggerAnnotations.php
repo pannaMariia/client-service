@@ -11,8 +11,8 @@ use OpenApi\Attributes as OA;
     description: "API для управления клиентским сервисом",
     title: "Client Service",
     contact: new OA\Contact(
-        name: "Support",
-        email: "support@example.com"
+        name: "Mariia",
+        email: "mariia@email.com"
     )
 )]
 #[OA\Server(
@@ -27,10 +27,7 @@ use OpenApi\Attributes as OA;
     name: "Users",
     description: "Управление пользователями"
 )]
-#[OA\Tag(
-    name: "Health",
-    description: "Проверка статуса API"
-)]
+
 #[OA\SecurityScheme(
     securityScheme: "bearerAuth",
     type: "http",

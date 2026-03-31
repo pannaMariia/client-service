@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,6 +22,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "updated_at", type: "string", format: "date-time")
     ]
 )]
+
 class UserController extends Controller
 {
     #[OA\Get(
@@ -49,7 +49,6 @@ class UserController extends Controller
     #[OA\Post(
         path: "/users",
         summary: "Создать нового пользователя",
-        tags: ["Users"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -62,6 +61,7 @@ class UserController extends Controller
                 ]
             )
         ),
+        tags: ["Users"],
         responses: [
             new OA\Response(
                 response: 201,
@@ -120,15 +120,6 @@ class UserController extends Controller
     #[OA\Put(
         path: "/users/{id}",
         summary: "Обновить пользователя",
-        tags: ["Users"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -141,6 +132,15 @@ class UserController extends Controller
                 ]
             )
         ),
+        tags: ["Users"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,
