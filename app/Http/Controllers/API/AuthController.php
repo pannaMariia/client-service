@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+use OpenApi\Attributes as OA;
 use App\Services\EventService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -14,6 +15,41 @@ class AuthController extends Controller
     /**
      * Регистрация нового пользователя
      */
+    #[OA\Post(
+        path: "/register",
+        summary: "Регистрация нового пользователя",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["name", "email", "password", "password_confirmation"],
+                properties: [
+                    new OA\Property(property: "name", type: "string", example: "John Doe"),
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", format: "password", example: "password123"),
+                    new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "password123"),
+                    new OA\Property(property: "phone", type: "string", example: "+79161234567", nullable: true),
+                    new OA\Property(property: "location", type: "string", example: "Moscow", nullable: true),
+                    new OA\Property(property: "birth_date", type: "string", format: "date", example: "1990-01-01", nullable: true)
+                ]
+            )
+        ),
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Пользователь успешно зарегистрирован",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "User registered successfully"),
+                        new OA\Property(property: "user", ref: "#/components/schemas/User"),
+                        new OA\Property(property: "token", type: "string", example: "1|abcdefghijklmnopqrstuvwxyz")
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: "Ошибка валидации")
+        ]
+    )]
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -40,7 +76,7 @@ class AuthController extends Controller
             'location' => $request->location,
             'birth_date' => $request->birth_date,
         ]);
-        //отправка ивента в world
+        //отправка ивента в world - пока не работает
 
 
         try {
@@ -69,6 +105,52 @@ class AuthController extends Controller
     /**
      * Авторизация пользователя
      */
+    #[OA\Post(
+        path: "/login",
+        summary: "Авторизация пользователя",
+        tags: ["Auth"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email", "password"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", format: "password", example: "password123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Успешный вход",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Login successful"),
+                        new OA\Property(property: "user", ref: "#/components/schemas/User"),
+                        new OA\Property(property: "token", type: "string", example: "1|abcdefghijklmnopqrstuvwxyz")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Неверные учетные данные",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Invalid credentials"),
+                        new OA\Property(property: "errors", type: "object",
+                            properties: [
+                                new OA\Property(property: "email", type: "array", items: new OA\Items(type: "string"), example: ["The provided credentials are incorrect."])
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Ошибка валидации"
+            )
+        ]
+    )]
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -110,6 +192,24 @@ class AuthController extends Controller
     /**
      * Получить профиль текущего пользователя
      */
+    #[OA\Get(
+        path: "/profile",
+        summary: "Получить профиль текущего пользователя",
+        security: [["bearerAuth" => []]],
+        tags: ["Profile"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Профиль пользователя",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "user", ref: "#/components/schemas/User")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "Не авторизован")
+        ]
+    )]
     public function profile(Request $request)
     {
         return response()->json([
@@ -120,6 +220,37 @@ class AuthController extends Controller
     /**
      * Обновить профиль пользователя
      */
+    #[OA\Put(
+        path: "/profile",
+        summary: "Обновить профиль пользователя",
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "name", type: "string", example: "Updated Name"),
+                    new OA\Property(property: "phone", type: "string", example: "+79161234567", nullable: true),
+                    new OA\Property(property: "location", type: "string", example: "Saint Petersburg", nullable: true),
+                    new OA\Property(property: "birth_date", type: "string", format: "date", example: "1990-01-01", nullable: true)
+                ]
+            )
+        ),
+        tags: ["Profile"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Профиль обновлен",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Profile updated successfully"),
+                        new OA\Property(property: "user", ref: "#/components/schemas/User")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "Не авторизован"),
+            new OA\Response(response: 422, description: "Ошибка валидации")
+        ]
+    )]
     public function updateProfile(Request $request)
     {
         $user = $request->user();

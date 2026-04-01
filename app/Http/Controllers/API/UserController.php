@@ -13,17 +13,16 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: "User",
     properties: [
-        new OA\Property(property: "id", type: "integer", example: 1),
+        new OA\Property(property: "id", type: "string", format: "uuid", example: "550e8400-e29b-41d4-a716-446655440000"),
         new OA\Property(property: "name", type: "string", example: "John Doe"),
         new OA\Property(property: "email", type: "string", format: "email", example: "john@example.com"),
         new OA\Property(property: "phone", type: "string", example: "+1234567890", nullable: true),
-        new OA\Property(property: "address", type: "string", example: "123 Main St", nullable: true),
-        new OA\Property(property: "status", type: "string", enum: ["active", "inactive", "blocked"], example: "active"),
+        new OA\Property(property: "location", type: "string", example: "Moscow", nullable: true),
+        new OA\Property(property: "birth_date", type: "string", format: "date", nullable: true),
         new OA\Property(property: "created_at", type: "string", format: "date-time"),
         new OA\Property(property: "updated_at", type: "string", format: "date-time")
     ]
 )]
-
 class UserController extends Controller
 {
     #[OA\Get(
@@ -58,7 +57,8 @@ class UserController extends Controller
                     new OA\Property(property: "name", type: "string", example: "John Doe"),
                     new OA\Property(property: "email", type: "string", format: "email", example: "john@example.com"),
                     new OA\Property(property: "phone", type: "string", example: "+1234567890", nullable: true),
-                    new OA\Property(property: "address", type: "string", example: "123 Main St", nullable: true)
+                    new OA\Property(property: "location", type: "string", example: "Moscow", nullable: true),
+                    new OA\Property(property: "birth_date", type: "string", format: "date", nullable: true)
                 ]
             )
         ),
@@ -81,7 +81,8 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
         ]);
 
         $user = User::create($validated);
@@ -97,7 +98,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "integer")
+                schema: new OA\Schema(type: "string", format: "uuid")
             )
         ],
         responses: [
@@ -112,7 +113,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function show(int $id): JsonResponse
+    public function show(string $id): JsonResponse
     {
         $user = User::findOrFail($id);
         return response()->json($user);
@@ -128,8 +129,8 @@ class UserController extends Controller
                     new OA\Property(property: "name", type: "string", example: "John Doe Updated"),
                     new OA\Property(property: "email", type: "string", format: "email", example: "john.updated@example.com"),
                     new OA\Property(property: "phone", type: "string", example: "+1234567890"),
-                    new OA\Property(property: "address", type: "string", example: "456 New St"),
-                    new OA\Property(property: "status", type: "string", enum: ["active", "inactive", "blocked"])
+                    new OA\Property(property: "location", type: "string", example: "Saint Petersburg"),
+                    new OA\Property(property: "birth_date", type: "string", format: "date", example: "1990-01-01")
                 ]
             )
         ),
@@ -139,7 +140,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "integer")
+                schema: new OA\Schema(type: "string", format: "uuid")
             )
         ],
         responses: [
@@ -154,7 +155,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse
     {
         $user = User::findOrFail($id);
 
@@ -162,8 +163,8 @@ class UserController extends Controller
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $id,
             'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'status' => 'sometimes|in:active,inactive,blocked',
+            'location' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
         ]);
 
         $user->update($validated);
@@ -179,7 +180,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "integer")
+                schema: new OA\Schema(type: "string", format: "uuid")
             )
         ],
         responses: [
@@ -193,7 +194,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function destroy(int $id): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
         $user = User::findOrFail($id);
         $user->delete();

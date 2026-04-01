@@ -27,13 +27,21 @@ use OpenApi\Attributes as OA;
     name: "Users",
     description: "Управление пользователями"
 )]
-
+#[OA\Tag(
+    name: "Auth",
+    description: "Аутентификация и регистрация"
+)]
+#[OA\Tag(
+    name: "Profile",
+    description: "Управление профилем пользователя"
+)]
 #[OA\SecurityScheme(
     securityScheme: "bearerAuth",
     type: "http",
-    scheme: "bearer",
-    bearerFormat: "JWT"
+    bearerFormat: "JWT",
+    scheme: "bearer"
 )]
+
 class SwaggerAnnotations
 {
 }

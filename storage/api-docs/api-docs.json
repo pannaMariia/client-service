@@ -4,8 +4,8 @@
         "title": "Client Service",
         "description": "API для управления клиентским сервисом",
         "contact": {
-            "name": "Support",
-            "email": "support@example.com"
+            "name": "Mariia",
+            "email": "mariia@email.com"
         },
         "version": "1.0.0"
     },
@@ -20,35 +20,296 @@
         }
     ],
     "paths": {
-        "/health": {
-            "get": {
+        "/register": {
+            "post": {
                 "tags": [
-                    "Health"
+                    "Auth"
                 ],
-                "summary": "Проверка статуса API",
-                "operationId": "6eb167248e9a148e22e17e8820531a72",
+                "summary": "Регистрация нового пользователя",
+                "description": "Регистрация нового пользователя",
+                "operationId": "e66f8a7452e13b03ae4e77dbb42e435c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+79161234567",
+                                        "nullable": true
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Moscow",
+                                        "nullable": true
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-01-01",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "200": {
-                        "description": "API работает корректно",
+                    "201": {
+                        "description": "Пользователь успешно зарегистрирован",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "message": {
                                             "type": "string",
-                                            "example": "ok"
+                                            "example": "User registered successfully"
                                         },
-                                        "timestamp": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "token": {
                                             "type": "string",
-                                            "format": "date-time"
+                                            "example": "1|abcdefghijklmnopqrstuvwxyz"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
                     }
                 }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "description": "Авторизация пользователя",
+                "operationId": "d618a255475240ba3d40cc39692cd924",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abcdefghijklmnopqrstuvwxyz"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "The provided credentials are incorrect."
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Получить профиль текущего пользователя",
+                "description": "Получить профиль текущего пользователя",
+                "operationId": "89b41a6563613a8c5f3062bc9ea139be",
+                "responses": {
+                    "200": {
+                        "description": "Профиль пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Обновить профиль пользователя",
+                "description": "Обновить профиль пользователя",
+                "operationId": "14d5c88a0367103e6c48598ee734bc72",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Name"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+79161234567",
+                                        "nullable": true
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Saint Petersburg",
+                                        "nullable": true
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-01-01",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Профиль обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Profile updated successfully"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/users": {
@@ -104,9 +365,14 @@
                                         "example": "+1234567890",
                                         "nullable": true
                                     },
-                                    "address": {
+                                    "location": {
                                         "type": "string",
-                                        "example": "123 Main St",
+                                        "example": "Moscow",
+                                        "nullable": true
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
                                         "nullable": true
                                     }
                                 },
@@ -145,7 +411,8 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
@@ -177,7 +444,8 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
@@ -200,17 +468,14 @@
                                         "type": "string",
                                         "example": "+1234567890"
                                     },
-                                    "address": {
+                                    "location": {
                                         "type": "string",
-                                        "example": "456 New St"
+                                        "example": "Saint Petersburg"
                                     },
-                                    "status": {
+                                    "birth_date": {
                                         "type": "string",
-                                        "enum": [
-                                            "active",
-                                            "inactive",
-                                            "blocked"
-                                        ]
+                                        "format": "date",
+                                        "example": "1990-01-01"
                                     }
                                 },
                                 "type": "object"
@@ -246,7 +511,8 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
@@ -266,8 +532,9 @@
             "User": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "example": 1
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
                     },
                     "name": {
                         "type": "string",
@@ -283,19 +550,15 @@
                         "example": "+1234567890",
                         "nullable": true
                     },
-                    "address": {
+                    "location": {
                         "type": "string",
-                        "example": "123 Main St",
+                        "example": "Moscow",
                         "nullable": true
                     },
-                    "status": {
+                    "birth_date": {
                         "type": "string",
-                        "example": "active",
-                        "enum": [
-                            "active",
-                            "inactive",
-                            "blocked"
-                        ]
+                        "format": "date",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
@@ -323,8 +586,12 @@
             "description": "Управление пользователями"
         },
         {
-            "name": "Health",
-            "description": "Проверка статуса API"
+            "name": "Auth",
+            "description": "Аутентификация и регистрация"
+        },
+        {
+            "name": "Profile",
+            "description": "Управление профилем пользователя"
         }
     ]
 }
