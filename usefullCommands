@@ -9,7 +9,8 @@ php artisan serve --port=8080
 
 # Запуск в фоновом режиме (освобождает терминал)
 php artisan serve > /dev/null 2>&1 &
-
+# Запустить тестирование
+php artisan test
 # Laravel Artisan
 php artisan list                 # Все доступные команды
 php artisan route:list           # Список всех маршрутов

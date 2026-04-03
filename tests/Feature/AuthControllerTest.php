@@ -14,6 +14,7 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function user_can_register()
     {
+
         $response = $this->postJson('/api/v1/register', [
             'name' => 'New User',
             'email' => 'newuser@example.com',
@@ -47,8 +48,7 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function user_can_login()
     {
-        $user = User::create([
-            'name' => 'Test User',
+        $user = User::factory()->create([
             'email' => 'test@example.com',
             'password' => bcrypt('password123'),
         ]);
@@ -65,11 +65,12 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function login_fails_with_wrong_credentials()
     {
-        $user = User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password123'),
-        ]);
+        $user = User::factory()->create();
+//        $user = User::create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//            'password' => bcrypt('password123'),
+//        ]);
 
         $response = $this->postJson('/api/v1/login', [
             'email' => 'test@example.com',
@@ -83,11 +84,12 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function authenticated_user_can_get_profile()
     {
-        $user = User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password123'),
-        ]);
+        $user = User::factory()->create();
+//        $user = User::create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//            'password' => bcrypt('password123'),
+//        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -110,11 +112,12 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function user_can_update_profile()
     {
-        $user = User::create([
-            'name' => 'Old Name',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password123'),
-        ]);
+        $user = User::factory()->create();
+//        $user = User::create([
+//            'name' => 'Old Name',
+//            'email' => 'test@example.com',
+//            'password' => bcrypt('password123'),
+//        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -132,11 +135,12 @@ class AuthControllerTest extends TestCase
     #[Test]
     public function user_can_logout()
     {
-        $user = User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password123'),
-        ]);
+        $user = User::factory()->create();
+//        $user = User::create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//            'password' => bcrypt('password123'),
+//        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

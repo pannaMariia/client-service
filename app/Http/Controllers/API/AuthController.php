@@ -108,7 +108,6 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/login",
         summary: "Авторизация пользователя",
-        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -119,6 +118,7 @@ class AuthController extends Controller
                 ]
             )
         ),
+        tags: ["Auth"],
         responses: [
             new OA\Response(
                 response: 200,
@@ -137,10 +137,10 @@ class AuthController extends Controller
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "message", type: "string", example: "Invalid credentials"),
-                        new OA\Property(property: "errors", type: "object",
-                            properties: [
-                                new OA\Property(property: "email", type: "array", items: new OA\Items(type: "string"), example: ["The provided credentials are incorrect."])
-                            ]
+                        new OA\Property(property: "errors", properties: [
+                            new OA\Property(property: "email", type: "array", items: new OA\Items(type: "string"), example: ["The provided credentials are incorrect."])
+                        ],
+                            type: "object"
                         )
                     ]
                 )
@@ -176,10 +176,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Удаляем старые токены
         $user->tokens()->delete();
-
-        // Создаем новый токен
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

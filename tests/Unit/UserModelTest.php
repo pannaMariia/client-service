@@ -14,12 +14,13 @@ class UserModelTest extends TestCase
     #[Test]
     public function it_creates_user_with_uuid()
     {
-        $user = User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password123'),
-            'location' => 'Moscow',
-        ]);
+        $user = User::factory()->create();
+//        $user = User::create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//            'password' => bcrypt('password123'),
+//            'location' => 'Moscow',
+//        ]);
 
         $this->assertNotNull($user->id);
         $this->assertMatchesRegularExpression('/^[a-f0-9-]{36}$/', $user->id);
