@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: "User",
     properties: [
-        new OA\Property(property: "id", type: "string", format: "uuid", example: "550e8400-e29b-41d4-a716-446655440000"),
+        new OA\Property(property: "id", type: "integer",  example: "1"),
         new OA\Property(property: "name", type: "string", example: "John Doe"),
         new OA\Property(property: "email", type: "string", format: "email", example: "john@example.com"),
         new OA\Property(property: "phone", type: "string", example: "+1234567890", nullable: true),
@@ -98,7 +98,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "string", format: "uuid")
+                schema: new OA\Schema(type: "integer")
             )
         ],
         responses: [
@@ -113,7 +113,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function show(string $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
         return response()->json($user);
@@ -140,7 +140,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "string", format: "uuid")
+                schema: new OA\Schema(type: "integer")
             )
         ],
         responses: [
@@ -155,7 +155,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
 
@@ -180,7 +180,7 @@ class UserController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "string", format: "uuid")
+                schema: new OA\Schema(type: "integer")
             )
         ],
         responses: [
@@ -194,7 +194,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
         $user->delete();
