@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.docker
+vendor/
+node_modules/
+storage/*.key
+storage/api-docs/
+tests/
+.phpunit.cache
+.DS_Store
+docker-compose.yml
+*.md

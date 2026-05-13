@@ -1,0 +1,52 @@
+
+services:
+
+  postgres:
+    image: postgres:14
+    container_name: client-service-postgres
+    environment:
+      POSTGRES_DB: client_service_db
+      POSTGRES_USER: panova
+      POSTGRES_PASSWORD: 321
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - user-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panova"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  client-service:
+    build: .
+    container_name: client-service
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: client_service_db
+      DB_USERNAME: panova
+      DB_PASSWORD: 321
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./logs:/var/www/html/storage/logs
+    networks:
+      - user-network
+
+networks:
+  user-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
